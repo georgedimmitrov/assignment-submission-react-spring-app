@@ -32,42 +32,62 @@ const CodeReviewerDashboard = () => {
 
       <Row>
         <Col>
-          <h2>Code Reviewer Dashboard</h2>
+          <h2 className="mb-4">Code Reviewer Dashboard</h2>
         </Col>
       </Row>
 
-      {assignments ? (
-        <div
-          className="d-grid gap-3"
-          style={{ gridTemplateColumns: "repeat(auto-fill, 18rem)" }}
+      {/* <div className="assignment-wrapper in-review">
+        
+      </div> */}
+
+      <div className="assignment-wrapper submitted">
+        <h4
+          style={{
+            marginTop: "-1.4em",
+            backgroundColor: "white",
+            width: "fit-content",
+            padding: "0 0.15em",
+          }}
         >
-          {assignments.map((assignment) => (
-            <Card key={assignment.id}>
-              <Card.Body>
-                <Card.Title>Assignment #{assignment.number}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
-                    {assignment.status}
-                  </Badge>
-                </Card.Subtitle>
-                <Card.Text>
-                  <span style={{ display: "block" }}>
-                    <strong>Github URL:</strong> {assignment.githubUrl}
-                  </span>
-                  <span style={{ display: "block" }}>
-                    <strong>Branch:</strong> {assignment.branch}
-                  </span>
-                </Card.Text>
-                <Link to={`/assignments/${assignment.id}`}>
-                  <Button variant="secondary">Edit</Button>
-                </Link>
-              </Card.Body>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <></>
-      )}
+          Awaiting Review
+        </h4>
+        {assignments ? (
+          <div
+            className="d-grid gap-3"
+            style={{ gridTemplateColumns: "repeat(auto-fill, 18rem)" }}
+          >
+            {assignments.map((assignment) => (
+              <Card key={assignment.id}>
+                <Card.Body>
+                  <Card.Title>Assignment #{assignment.number}</Card.Title>
+                  <Card.Subtitle className="mb-2 text-muted">
+                    <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
+                      {assignment.status}
+                    </Badge>
+                  </Card.Subtitle>
+                  <Card.Text>
+                    <span style={{ display: "block" }}>
+                      <strong>Github URL:</strong> {assignment.githubUrl}
+                    </span>
+                    <span style={{ display: "block" }}>
+                      <strong>Branch:</strong> {assignment.branch}
+                    </span>
+                  </Card.Text>
+                  <Link to={`/assignments/${assignment.id}`}>
+                    <Button variant="secondary">Edit</Button>
+                  </Link>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+
+      {/* <div className="assignment-wrapper needs-update">
+
+      </div> */}
     </Container>
   );
 };

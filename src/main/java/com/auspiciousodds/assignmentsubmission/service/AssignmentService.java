@@ -3,6 +3,7 @@ package com.auspiciousodds.assignmentsubmission.service;
 import com.auspiciousodds.assignmentsubmission.domain.Assignment;
 import com.auspiciousodds.assignmentsubmission.domain.User;
 import com.auspiciousodds.assignmentsubmission.enums.AssignmentStatusEnum;
+import com.auspiciousodds.assignmentsubmission.enums.AuthorityEnum;
 import com.auspiciousodds.assignmentsubmission.repository.AssignmentRepository;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +52,16 @@ public class AssignmentService {
    }
 
    public Set<Assignment> findByUser(User user) {
+      boolean hasCodeReviewerRole = user.getAuthorities()
+            .stream()
+            .filter(auth -> AuthorityEnum.ROLE_CODE_REVIEWER.name().equals(auth.getAuthority()))
+            .count() > 0;
+      if (hasCodeReviewerRole) {
+         Set<Assignment> byStatusEquals =
+               assignmentRepository.findByStatusEquals(AssignmentStatusEnum.SUBMITTED.getStatus());
+         Set<Assignment> byCodeReviewer = assignmentRepository.findByCodeReviewer(user);
+         return assignmentRepository.findByCodeReviewer(user);
+      }
       return assignmentRepository.findByUser(user);
    }
 
