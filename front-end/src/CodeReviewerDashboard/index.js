@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
+import jwt_decode from "jwt-decode";
 import ajax from "../services/fetchService";
 import { useLocalStorage } from "../util/useLocalStorage";
 
@@ -18,6 +19,24 @@ const CodeReviewerDashboard = () => {
   function logout() {
     setJwt(null);
     navigate(0);
+  }
+
+  function claimAssignment(assignment) {
+    const decodedJwt = jwt_decode(jwt);
+    assignment.codeReviewer = {
+      username: decodedJwt.sub,
+    };
+    assignment.status = "In Review";
+    ajax(`api/assignments/${assignment.id}`, "PUT", jwt, assignment).then(
+      (updatedAssignment) => {
+        const assignmentsCopy = [...assignments];
+        const index = assignmentsCopy.findIndex(
+          (assignment) => assignment.id === updatedAssignment.id
+        );
+        assignmentsCopy[index] = updatedAssignment;
+        setAssignments(assignmentsCopy);
+      }
+    );
   }
 
   return (
@@ -73,9 +92,13 @@ const CodeReviewerDashboard = () => {
                       <strong>Branch:</strong> {assignment.branch}
                     </span>
                   </Card.Text>
-                  <Link to={`/assignments/${assignment.id}`}>
-                    <Button variant="secondary">Edit</Button>
-                  </Link>
+
+                  <Button
+                    onClick={() => claimAssignment(assignment)}
+                    variant="secondary"
+                  >
+                    Claim
+                  </Button>
                 </Card.Body>
               </Card>
             ))}

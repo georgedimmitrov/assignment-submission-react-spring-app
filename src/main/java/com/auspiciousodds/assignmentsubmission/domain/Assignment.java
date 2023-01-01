@@ -22,6 +22,9 @@ public class Assignment {
    @ManyToOne(optional = false)
    private User user;
 
+   @ManyToOne
+   private User codeReviewer;
+
    public long getId() {
       return id;
    }
@@ -76,5 +79,13 @@ public class Assignment {
 
    public void setUser(User user) {
       this.user = user;
+   }
+
+   public User getCodeReviewer() {
+      return codeReviewer;
+   }
+
+   public void setCodeReviewer(User codeReviewer) {
+      this.codeReviewer = codeReviewer;
    }
 }

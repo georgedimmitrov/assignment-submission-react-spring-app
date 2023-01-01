@@ -5,6 +5,7 @@ import com.auspiciousodds.assignmentsubmission.domain.User;
 import com.auspiciousodds.assignmentsubmission.enums.AssignmentStatusEnum;
 import com.auspiciousodds.assignmentsubmission.enums.AuthorityEnum;
 import com.auspiciousodds.assignmentsubmission.repository.AssignmentRepository;
+import com.auspiciousodds.assignmentsubmission.util.AuthorityUtil;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -16,6 +17,9 @@ public class AssignmentService {
 
    @Autowired
    private AssignmentRepository assignmentRepository;
+
+   @Autowired
+   private UserService userService;
 
    public Assignment save(User user) {
       Assignment assignment = new Assignment();
@@ -70,6 +74,15 @@ public class AssignmentService {
    }
 
    public Assignment save(Assignment assignment) {
+      // add code_reviewer to this assignment if it was claimed
+      if (assignment.getCodeReviewer() != null) {
+         User codeReviewer = assignment.getCodeReviewer();
+         codeReviewer = userService.findUserByUsername(codeReviewer.getUsername()).orElse(new User());
+
+         if (AuthorityUtil.hasRole(AuthorityEnum.ROLE_CODE_REVIEWER.name(), codeReviewer)) {
+            assignment.setCodeReviewer(codeReviewer);
+         }
+      }
       return assignmentRepository.save(assignment);
    }
 }
