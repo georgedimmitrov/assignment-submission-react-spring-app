@@ -13,7 +13,7 @@ In order to run this app locally, you have to:
    INSERT INTO users(cohort_start_date, password, username)
    VALUES ("2022-01-01", "encoded_pass", "username");
    ```
-7.Then insert into "authority" table
+7. Then insert into "authority" table
 ```
 INSERT INTO authority (authority, user_id)
 VALUES ("ROLE_STUDENT", 1 or SELECT id FROM users WHERE ...);
