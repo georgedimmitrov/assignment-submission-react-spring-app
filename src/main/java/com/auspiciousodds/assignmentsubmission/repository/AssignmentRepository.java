@@ -11,8 +11,10 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
    Set<Assignment> findByUser(User user);
 
-   @Query("SELECT a FROM Assignment a WHERE a.status = 'submitted'")
-   Set<Assignment> findByCodeReviewer(User user);
+   @Query("SELECT a FROM Assignment a " +
+         "WHERE a.status = 'submitted' " +
+         "OR a.codeReviewer = :codeReviewer")
+   Set<Assignment> findByCodeReviewer(User codeReviewer);
 
    Set<Assignment> findByStatusEquals(String status);
 }

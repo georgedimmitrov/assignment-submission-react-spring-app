@@ -52,7 +52,11 @@ const Dashboard = () => {
               <Card.Body>
                 <Card.Title>Assignment #{assignment.number}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                  <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
+                  <Badge
+                    pill
+                    bg={assignment.status === "Completed" ? "success" : "info"}
+                    style={{ fontSize: "0.9em" }}
+                  >
                     {assignment.status}
                   </Badge>
                 </Card.Subtitle>

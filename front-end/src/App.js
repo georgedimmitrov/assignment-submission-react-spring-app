@@ -10,6 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import jwt_decode from "jwt-decode";
 import CodeReviewerDashboard from "./CodeReviewerDashboard";
+import CodeReviewAssignmentView from "./CodeReviewAssignmentView";
 
 function App() {
   const [jwt, setJwt] = useLocalStorage("", "jwt");
@@ -42,9 +43,15 @@ function App() {
       <Route
         path="assignments/:id"
         element={
-          <PrivateRoute>
-            <AssignmentView />
-          </PrivateRoute>
+          roles.includes("ROLE_CODE_REVIEWER") ? (
+            <PrivateRoute>
+              <CodeReviewAssignmentView />
+            </PrivateRoute>
+          ) : (
+            <PrivateRoute>
+              <AssignmentView />
+            </PrivateRoute>
+          )
         }
       />
       <Route path="/login" element={<Login />} />

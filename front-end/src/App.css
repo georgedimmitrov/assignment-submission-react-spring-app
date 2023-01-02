@@ -2,4 +2,11 @@
   border: 1px dashed lightgray;
   padding: 1em;
   border-radius: 1em;
+  margin-top: 2em;
+}
+
+.assignment-wrapper-title {
+  margin-top: -1.4em;
+  background-color: white;
+  width: fit-content;
 }
