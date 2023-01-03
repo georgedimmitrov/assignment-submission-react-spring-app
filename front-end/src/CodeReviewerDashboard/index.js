@@ -1,35 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 import ajax from "../services/fetchService";
-import { useLocalStorage } from "../util/useLocalStorage";
 import StatusBadge from "../StatusBadge";
+import { useUser } from "../UserProvider";
 
 const CodeReviewerDashboard = () => {
-  const [jwt, setJwt] = useLocalStorage("", "jwt");
+  const user = useUser();
   const [assignments, setAssignments] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    ajax("api/assignments", "GET", jwt).then((assignments) => {
+    if (!user.jwt) {
+      navigate("/login");
+    }
+  });
+
+  useEffect(() => {
+    ajax("api/assignments", "GET", user.jwt).then((assignments) => {
       setAssignments(assignments);
     });
-  }, [jwt]);
+  }, [user.jwt]);
 
   function logout() {
-    setJwt(null);
+    user.setJwt(null);
     navigate(0);
     // navigate("/", { reload: true });
   }
 
   function claimAssignment(assignment) {
-    const decodedJwt = jwt_decode(jwt);
+    const decodedJwt = jwt_decode(user.jwt);
     assignment.codeReviewer = {
       username: decodedJwt.sub,
     };
     assignment.status = "In Review";
-    ajax(`api/assignments/${assignment.id}`, "PUT", jwt, assignment).then(
+    ajax(`api/assignments/${assignment.id}`, "PUT", user.jwt, assignment).then(
       (updatedAssignment) => {
         const assignmentsCopy = [...assignments];
         const index = assignmentsCopy.findIndex(

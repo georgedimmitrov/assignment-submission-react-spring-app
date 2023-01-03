@@ -13,12 +13,14 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ajax from "../services/fetchService";
 import StatusBadge from "../StatusBadge";
+import { useUser } from "../UserProvider";
 import { useLocalStorage } from "../util/useLocalStorage";
 
 const AssignmentView = () => {
   const navigate = useNavigate();
-  const [jwt, setJwt] = useLocalStorage("", "jwt");
+  const user = useUser();
   const { id } = useParams();
+
   const [assignment, setAssignment] = useState({
     branch: "",
     githubUrl: "",
@@ -45,7 +47,7 @@ const AssignmentView = () => {
   }
 
   function persist() {
-    ajax(`/api/assignments/${id}`, "PUT", jwt, assignment).then(
+    ajax(`/api/assignments/${id}`, "PUT", user.jwt, assignment).then(
       (assignment) => {
         setAssignment(assignment);
       }
@@ -64,18 +66,20 @@ const AssignmentView = () => {
   }, [assignment]);
 
   useEffect(() => {
-    ajax(`/api/assignments/${id}`, "GET", jwt).then((assignmentResponse) => {
-      const assignment = assignmentResponse.assignment;
-      if (!assignment.branch) {
-        assignment.branch = "";
+    ajax(`/api/assignments/${id}`, "GET", user.jwt).then(
+      (assignmentResponse) => {
+        const assignment = assignmentResponse.assignment;
+        if (!assignment.branch) {
+          assignment.branch = "";
+        }
+        if (!assignment.githubUrl) {
+          assignment.githubUrl = "";
+        }
+        setAssignment(assignment);
+        setAssignmentEnums(assignmentResponse.assignmentEnums);
+        setAssignmentStatuses(assignmentResponse.statusEnums);
       }
-      if (!assignment.githubUrl) {
-        assignment.githubUrl = "";
-      }
-      setAssignment(assignment);
-      setAssignmentEnums(assignmentResponse.assignmentEnums);
-      setAssignmentStatuses(assignmentResponse.statusEnums);
-    });
+    );
   }, []);
 
   return (

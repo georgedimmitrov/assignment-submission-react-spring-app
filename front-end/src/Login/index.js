@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useLocalStorage } from "../util/useLocalStorage";
+import { useUser } from "../UserProvider";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [jwt, setJwt] = useLocalStorage("", "jwt");
+  const user = useUser();
   const navigate = useNavigate();
 
   function onLogin() {
@@ -30,7 +31,7 @@ const Login = () => {
         }
       })
       .then(([body, headers]) => {
-        setJwt(headers.get("authorization"));
+        user.setJwt(headers.get("authorization"));
         // navigate("/dashboard");
         window.location.href = "/dashboard";
       })

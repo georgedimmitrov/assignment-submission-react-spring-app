@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import { Button, Card, Col, Row } from "react-bootstrap";
 import ajax from "../services/fetchService";
 import { useLocalStorage } from "../util/useLocalStorage";
 import StatusBadge from "../StatusBadge";
+import { useUser } from "../UserProvider";
 
 const Dashboard = () => {
-  const [jwt, setJwt] = useLocalStorage("", "jwt");
+  const user = useUser();
   const [assignments, setAssignments] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    ajax("api/assignments", "GET", jwt).then((assignments) => {
+    ajax("api/assignments", "GET", user.jwt).then((assignments) => {
       setAssignments(assignments);
     });
-  }, [jwt]);
+  }, [user.jwt]);
 
   function createAssignment() {
-    ajax("api/assignments", "POST", jwt, {
+    ajax("api/assignments", "POST", user.jwt, {
       username: "jorka",
       password: "asdfasdf",
     }).then((assignment) => {
@@ -26,7 +27,7 @@ const Dashboard = () => {
   }
 
   function logout() {
-    setJwt(null);
+    user.setJwt(null);
     navigate(0);
   }
 
