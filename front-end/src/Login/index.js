@@ -31,9 +31,8 @@ const Login = () => {
       })
       .then(([body, headers]) => {
         setJwt(headers.get("authorization"));
-        setTimeout(() => {
-          navigate("/dashboard");
-        });
+        // navigate("/dashboard");
+        window.location.href = "/dashboard";
       })
       .catch((message) => {
         alert(message);
@@ -43,10 +42,6 @@ const Login = () => {
   function onLogout() {
     navigate("/");
   }
-
-  // useEffect(() => {
-  //   navigate("/dashboard");
-  // }, []);
 
   return (
     <>

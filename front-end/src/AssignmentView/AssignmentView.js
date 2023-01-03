@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ajax from "../services/fetchService";
+import StatusBadge from "../StatusBadge";
 import { useLocalStorage } from "../util/useLocalStorage";
 
 const AssignmentView = () => {
@@ -35,9 +36,9 @@ const AssignmentView = () => {
     setAssignment(newAssignment);
   }
 
-  function save() {
-    if (assignment.status === assignmentStatuses[0].status) {
-      updateAssignment("status", assignmentStatuses[1].status);
+  function save(status) {
+    if (status && assignment.status !== status) {
+      updateAssignment("status", status);
     } else {
       persist();
     }
@@ -99,9 +100,7 @@ const AssignmentView = () => {
               Status:
             </Form.Label>
             <Col sm="9" md="8" className="d-flex align-items-center">
-              <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
-                {assignment.status}
-              </Badge>
+              <StatusBadge text={assignment.status}></StatusBadge>
             </Col>
           </Form.Group>
 
@@ -187,18 +186,24 @@ const AssignmentView = () => {
                 </Col>
               </Form.Group>
               <div className="d-flex gap-3">
-                {/* <Button size="lg" onClick={() => save()}>
-                  Submit Assignment
-                </Button> */}
                 <Button variant="secondary" size="lg" onClick={() => back()}>
                   Back
                 </Button>
               </div>
             </>
+          ) : assignment.status === "Pending Submission" ? (
+            <div className="d-flex gap-3">
+              <Button size="lg" onClick={() => save("Submitted")}>
+                Submit Assignment
+              </Button>
+              <Button variant="secondary" size="lg" onClick={() => back()}>
+                Back
+              </Button>
+            </div>
           ) : (
             <div className="d-flex gap-3">
-              <Button size="lg" onClick={() => save()}>
-                Submit Assignment
+              <Button size="lg" onClick={() => save("Resubmitted")}>
+                Resubmit Assignment
               </Button>
               <Button variant="secondary" size="lg" onClick={() => back()}>
                 Back

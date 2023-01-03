@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ajax from "../services/fetchService";
+import StatusBadge from "../StatusBadge";
 import { useLocalStorage } from "../util/useLocalStorage";
 
 const CodeReviewAssignmentView = () => {
@@ -99,9 +100,7 @@ const CodeReviewAssignmentView = () => {
               Status:
             </Form.Label>
             <Col sm="9" md="8" className="d-flex align-items-center">
-              <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
-                {assignment.status}
-              </Badge>
+              <StatusBadge text={assignment.status}></StatusBadge>
             </Col>
           </Form.Group>
 

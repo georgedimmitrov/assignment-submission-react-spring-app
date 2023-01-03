@@ -4,6 +4,7 @@ import { Badge, Button, Card, Col, Container, Row } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 import ajax from "../services/fetchService";
 import { useLocalStorage } from "../util/useLocalStorage";
+import StatusBadge from "../StatusBadge";
 
 const CodeReviewerDashboard = () => {
   const [jwt, setJwt] = useLocalStorage("", "jwt");
@@ -19,6 +20,7 @@ const CodeReviewerDashboard = () => {
   function logout() {
     setJwt(null);
     navigate(0);
+    // navigate("/", { reload: true });
   }
 
   function claimAssignment(assignment) {
@@ -80,9 +82,7 @@ const CodeReviewerDashboard = () => {
                   <Card.Body>
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                      <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
-                        {assignment.status}
-                      </Badge>
+                      <StatusBadge text={assignment.status}></StatusBadge>
                     </Card.Subtitle>
                     <Card.Text>
                       <span style={{ display: "block" }}>
@@ -111,22 +111,34 @@ const CodeReviewerDashboard = () => {
       <div className="assignment-wrapper submitted">
         <h4 className="px-2 assignment-wrapper-title">Awaiting Review</h4>
         {assignments &&
-        assignments.filter((assignment) => assignment.status === "Submitted")
-          .length > 0 ? (
+        assignments.filter(
+          (assignment) =>
+            assignment.status === "Submitted" ||
+            assignment.status === "Resubmitted"
+        ).length > 0 ? (
           <div
             className="d-grid gap-3"
             style={{ gridTemplateColumns: "repeat(auto-fill, 18rem)" }}
           >
             {assignments
-              .filter((assignment) => assignment.status === "Submitted")
+              .filter(
+                (assignment) =>
+                  assignment.status === "Submitted" ||
+                  assignment.status === "Resubmitted"
+              )
+              .sort((a, b) => {
+                if (a.status === "Resubmitted") {
+                  return -1;
+                } else {
+                  return 1;
+                }
+              })
               .map((assignment) => (
                 <Card key={assignment.id}>
                   <Card.Body>
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                      <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
-                        {assignment.status}
-                      </Badge>
+                      <StatusBadge text={assignment.status}></StatusBadge>
                     </Card.Subtitle>
                     <Card.Text>
                       <span style={{ display: "block" }}>
@@ -169,9 +181,7 @@ const CodeReviewerDashboard = () => {
                   <Card.Body>
                     <Card.Title>Assignment #{assignment.number}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                      <Badge pill bg="info" style={{ fontSize: "0.9em" }}>
-                        {assignment.status}
-                      </Badge>
+                      <StatusBadge text={assignment.status}></StatusBadge>
                     </Card.Subtitle>
                     <Card.Text>
                       <span style={{ display: "block" }}>

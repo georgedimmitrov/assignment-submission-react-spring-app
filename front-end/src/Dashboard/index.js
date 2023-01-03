@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import ajax from "../services/fetchService";
 import { useLocalStorage } from "../util/useLocalStorage";
+import StatusBadge from "../StatusBadge";
 
 const Dashboard = () => {
   const [jwt, setJwt] = useLocalStorage("", "jwt");
@@ -52,13 +53,7 @@ const Dashboard = () => {
               <Card.Body>
                 <Card.Title>Assignment #{assignment.number}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                  <Badge
-                    pill
-                    bg={assignment.status === "Completed" ? "success" : "info"}
-                    style={{ fontSize: "0.9em" }}
-                  >
-                    {assignment.status}
-                  </Badge>
+                  <StatusBadge text={assignment.status}></StatusBadge>
                 </Card.Subtitle>
                 <Card.Text>
                   <span style={{ display: "block" }}>
