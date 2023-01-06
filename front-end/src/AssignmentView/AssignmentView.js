@@ -14,13 +14,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import ajax from "../services/fetchService";
 import StatusBadge from "../StatusBadge";
 import { useUser } from "../UserProvider";
-import { useLocalStorage } from "../util/useLocalStorage";
 
 const AssignmentView = () => {
   const navigate = useNavigate();
   const user = useUser();
   const { id } = useParams();
-
   const [assignment, setAssignment] = useState({
     branch: "",
     githubUrl: "",
@@ -29,6 +27,12 @@ const AssignmentView = () => {
   });
   const [assignmentEnums, setAssignmentEnums] = useState([]);
   const [assignmentStatuses, setAssignmentStatuses] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState({
+    text: "",
+    assignmentId: id,
+    user: user.jwt,
+  });
 
   const prevAssignmentValue = useRef(assignment);
 
@@ -36,6 +40,12 @@ const AssignmentView = () => {
     const newAssignment = { ...assignment };
     newAssignment[prop] = value;
     setAssignment(newAssignment);
+  }
+
+  function updateComment(value) {
+    const commentCopy = { ...comment };
+    commentCopy.text = value;
+    setComment(commentCopy);
   }
 
   function save(status) {
@@ -52,6 +62,14 @@ const AssignmentView = () => {
         setAssignment(assignment);
       }
     );
+  }
+
+  function submitComment() {
+    ajax(`/api/comments`, "POST", user.jwt, comment).then((commentData) => {
+      const commentsCopy = [...comments];
+      commentsCopy.push(commentData);
+      setComments(commentsCopy);
+    });
   }
 
   function back() {
@@ -78,6 +96,12 @@ const AssignmentView = () => {
         setAssignment(assignment);
         setAssignmentEnums(assignmentResponse.assignmentEnums);
         setAssignmentStatuses(assignmentResponse.statusEnums);
+      }
+    );
+
+    ajax(`/api/comments?assignmentId=${id}`, "GET", user.jwt).then(
+      (commentsResponse) => {
+        setComments(commentsResponse);
       }
     );
   }, []);
@@ -214,6 +238,26 @@ const AssignmentView = () => {
               </Button>
             </div>
           )}
+          <div className="mt-4">
+            <textarea
+              className="d-block mb-2"
+              name="comment"
+              id="comment"
+              cols="40"
+              rows="6"
+              onChange={(e) => updateComment(e.target.value)}
+            ></textarea>
+            <Button onClick={() => submitComment()}>Post Comment</Button>
+          </div>
+
+          <div className="mt-4">
+            {comments.map((comment) => (
+              <div>
+                {`[${comment.createdDate}] `}
+                <strong>{comment.createdBy.name}</strong>: {comment.text}
+              </div>
+            ))}
+          </div>
         </>
       ) : (
         <></>

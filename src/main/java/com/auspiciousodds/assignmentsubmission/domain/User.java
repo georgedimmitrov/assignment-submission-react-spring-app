@@ -27,6 +27,8 @@ public class User implements UserDetails {
 
    private String username;
 
+   private String name;
+
    @JsonIgnore
    private String password;
 
@@ -57,6 +59,14 @@ public class User implements UserDetails {
 
    public void setUsername(String username) {
       this.username = username;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Override
