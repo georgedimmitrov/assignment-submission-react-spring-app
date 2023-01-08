@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,13 +31,23 @@ public class CommentController {
    @PostMapping("")
    public ResponseEntity<?> createComment(@RequestBody CommentDto commentDto,
          @AuthenticationPrincipal User user) {
-      Comment comment = null;
       try {
-         comment = commentService.save(commentDto, user);
+         Comment comment = commentService.save(commentDto, user);
          return ResponseEntity.ok(comment);
       } catch (Exception e) {
          e.printStackTrace();
          return ResponseEntity.status(500).body("Could not create comment");
+      }
+   }
+
+   @PutMapping("{commentId}")
+   public ResponseEntity<?> updateComment(@RequestBody CommentDto commentDto) {
+      try {
+         Comment comment = commentService.saveUpdatedComment(commentDto);
+         return ResponseEntity.ok(comment);
+      } catch (Exception e) {
+         e.printStackTrace();
+         return ResponseEntity.status(500).body("Could not updated comment");
       }
    }
 

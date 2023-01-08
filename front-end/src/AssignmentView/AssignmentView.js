@@ -11,6 +11,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import Comment from "../Comment";
 import ajax from "../services/fetchService";
 import StatusBadge from "../StatusBadge";
 import { useUser } from "../UserProvider";
@@ -25,14 +26,16 @@ const AssignmentView = () => {
     number: null,
     status: null,
   });
-  const [assignmentEnums, setAssignmentEnums] = useState([]);
-  const [assignmentStatuses, setAssignmentStatuses] = useState([]);
-  const [comments, setComments] = useState([]);
-  const [comment, setComment] = useState({
+  const emptyComment = {
+    id: null,
     text: "",
     assignmentId: id,
     user: user.jwt,
-  });
+  };
+  const [assignmentEnums, setAssignmentEnums] = useState([]);
+  const [assignmentStatuses, setAssignmentStatuses] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState(emptyComment);
 
   const prevAssignmentValue = useRef(assignment);
 
@@ -64,12 +67,42 @@ const AssignmentView = () => {
     );
   }
 
+  function handleEditComment(commentId) {
+    const comment = comments.find((comment) => comment.id === commentId);
+    const commentCopy = {
+      id: comment.id,
+      text: comment.text,
+      assignmentId: comment.assignment.id,
+      user: user.jwt,
+    };
+    setComment(commentCopy);
+  }
+
+  function handleDeleteComment(commentId) {
+    // TODO: delete comment
+  }
+
   function submitComment() {
-    ajax(`/api/comments`, "POST", user.jwt, comment).then((commentData) => {
-      const commentsCopy = [...comments];
-      commentsCopy.push(commentData);
-      setComments(commentsCopy);
-    });
+    if (comment.id) {
+      ajax(`/api/comments/${comment.id}`, "PUT", user.jwt, comment).then(
+        (commentDbData) => {
+          const commentsCopy = [...comments];
+          const i = commentsCopy.findIndex(
+            (comment) => comment.id === commentDbData.id
+          );
+          commentsCopy[i] = commentDbData;
+          setComments(commentsCopy);
+          setComment(emptyComment);
+        }
+      );
+    } else {
+      ajax(`/api/comments`, "POST", user.jwt, comment).then((commentDbData) => {
+        const commentsCopy = [...comments];
+        commentsCopy.push(commentDbData);
+        setComments(commentsCopy);
+        setComment(emptyComment);
+      });
+    }
   }
 
   function back() {
@@ -246,16 +279,19 @@ const AssignmentView = () => {
               cols="40"
               rows="6"
               onChange={(e) => updateComment(e.target.value)}
+              value={comment.text}
             ></textarea>
             <Button onClick={() => submitComment()}>Post Comment</Button>
           </div>
 
           <div className="mt-4">
             {comments.map((comment) => (
-              <div>
-                {`[${comment.createdDate}] `}
-                <strong>{comment.createdBy.name}</strong>: {comment.text}
-              </div>
+              <Comment
+                key={comment.id}
+                comment={comment}
+                emitEditComment={handleEditComment}
+                emitDeleteComment={handleDeleteComment}
+              />
             ))}
           </div>
         </>

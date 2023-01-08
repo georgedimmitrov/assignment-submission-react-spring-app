@@ -10,3 +10,10 @@
   background-color: white;
   width: fit-content;
 }
+
+.comment-bubble {
+  background-color: #eee;
+  border-radius: 1.2em;
+  padding: 0.7em;
+  margin: 1em 0;
+}

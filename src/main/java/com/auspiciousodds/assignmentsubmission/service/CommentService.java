@@ -6,10 +6,7 @@ import com.auspiciousodds.assignmentsubmission.domain.User;
 import com.auspiciousodds.assignmentsubmission.dto.CommentDto;
 import com.auspiciousodds.assignmentsubmission.repository.AssignmentRepository;
 import com.auspiciousodds.assignmentsubmission.repository.CommentRepository;
-import com.auspiciousodds.assignmentsubmission.repository.UserRepository;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,13 @@ public class CommentService {
       comment.setAssignment(assignment);
       comment.setCreatedDate(LocalDateTime.now());
       return commentRepository.save(comment);
+   }
+
+   public Comment saveUpdatedComment(CommentDto commentDto) throws Exception {
+      Comment dbComment = commentRepository.findById(commentDto.getId())
+            .orElseThrow(() -> new Exception("Comment to be updated not found in DB."));
+      dbComment.setText(commentDto.getText());
+      return commentRepository.save(dbComment);
    }
 
    public Set<Comment> getCommentsByAssignmentId(String assignmentId) {
