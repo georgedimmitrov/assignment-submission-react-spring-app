@@ -41,4 +41,8 @@ public class CommentService {
       Set<Comment> comments = commentRepository.findByAssignmentId(Long.parseLong(assignmentId));
       return comments;
    }
+
+   public void delete(Long commentId) {
+      commentRepository.deleteById(commentId);
+   }
 }

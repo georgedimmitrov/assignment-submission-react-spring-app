@@ -11,6 +11,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import CommentContainer from "../CommentContainer";
 import ajax from "../services/fetchService";
 import StatusBadge from "../StatusBadge";
 import { useUser } from "../UserProvider";
@@ -25,6 +26,7 @@ const CodeReviewAssignmentView = () => {
     githubUrl: "",
     number: null,
     status: null,
+    codeReviewVideoUrl: "",
   });
   const [assignmentEnums, setAssignmentEnums] = useState([]);
   const [assignmentStatuses, setAssignmentStatuses] = useState([]);
@@ -203,6 +205,8 @@ const CodeReviewAssignmentView = () => {
               Back
             </Button>
           </div>
+
+          <CommentContainer id={id} />
         </>
       ) : (
         <></>
